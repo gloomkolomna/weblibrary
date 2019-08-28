@@ -1,0 +1,63 @@
+﻿@model WebLibrary.Models.Catalog.AssetDetailModel
+
+<div class="container">
+    <div class="page-header clearfix detailHeading">
+        <h2 class="text-muted">Отображение библиотечных записей</h2>
+    </div>
+</div>
+
+<div class="jumbotron">
+    <div class="row">
+        <div class="col-md-4">
+            <div>
+                <img class="detailImage" src="@Model.ImageUrl" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <p id="itemTitle">@Model.Title</p>
+            <p id="itemAuthor">@Model.AuthorOrDirector</p>
+            <p id="itemStatus">@Model.Status</p>
+            <p id="itemType">@Model.Type</p>
+            <p id="itemLocation">@Model.CurrentLocation</p>
+
+            @if (Model.Status == "Lost")
+            {
+                <p>Эта запись была потеряна. Не может быть проверенным.</p>
+                <p><a class="btn btn-lg btn-danger" role="button" asp-controller="Catalog" asp-action="MarkFound" asp-route-id="@Model.AssetId">Пометить как найденный</a></p>
+            }
+
+            @if (Model.Status == "Checked Out")
+            {
+                <p id="itemPatron">Checked Out By: @Model.PatronName</p>
+                <p><a class="btn btn-lg btn-success" role="button" asp-controller="Catalog" asp-action="CheckIn" asp-route-id="@Model.AssetId">Регистрировать</a></p>
+                <p><a class="btn btn-lg btn-warning" role="button" asp-controller="Catalog" asp-action="Hold" asp-route-id="@Model.AssetId">Удержать</a></p>
+            }
+
+            @if (Model.Status == "Available")
+            {
+                <p>
+                    <a class="btn btn-lg btn-info" role="button" asp-controller="Catalog" asp-action="Checkout" asp-route-id="@Model.AssetId">
+                        Выписать
+                    </a>
+                </p>
+            }
+        </div>
+
+        <div class="col-md-4 detailInfo">
+            <table>
+                <tr>
+                    <td class="itemLable">ISBN: </td>
+                    <td class="itemValue">@Model.ISBN</td>
+                </tr>
+                <tr>
+                    <td class="itemLable">Шифр: </td>
+                    <td class="itemValue">@Model.DeweyCallNumber</td>
+                </tr>
+                <tr>
+                    <td class="itemLable">Стоимость замены: </td>
+                    <td class="itemValue">@Model.Cost</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
