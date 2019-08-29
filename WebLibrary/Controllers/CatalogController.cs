@@ -11,9 +11,11 @@ namespace WebLibrary.Controllers
     public class CatalogController : Controller
     {
         private ILibraryAsset _assets;
-        public CatalogController(ILibraryAsset assets)
+        private ICheckout _checkout;
+        public CatalogController(ILibraryAsset assets, ICheckout checkout)
         {
             _assets = assets;
+            _checkout = checkout;
         }
 
         public IActionResult Index()
@@ -39,10 +41,18 @@ namespace WebLibrary.Controllers
         {
             var asset = _assets.GetById(id);
 
+            var currentHolds = _checkout.GetCurrentHolds(id)
+                .Select(a => new AssetHoldModel
+                {
+                    HoldPlaced = _checkout.GetCurrentHoldPlaced(a.Id).ToString("d"),
+                    PatronName = _checkout.GetCurrentHoldPatronName(a.Id)
+                });
+
             var model = new AssetDetailModel
             {
                 AssetId = id,
                 Title = asset.Title,
+                Type = _assets.GetType(id),
                 Year = asset.Year,
                 Cost = asset.Cost,
                 Status = asset.Status.Name,
@@ -50,7 +60,11 @@ namespace WebLibrary.Controllers
                 AuthorOrDirector = _assets.GetAuthorOrDirector(id),
                 CurrentLocation = _assets.GetCurrentLocation(id)?.Name,
                 DeweyCallNumber = _assets.GetDeweyIndex(id),
-                ISBN = _assets.GetIsbn(id)
+                ISBN = _assets.GetIsbn(id),
+                CheckoutHistories = _checkout.GetCheckoutHistories(id),
+                LatestCheckout = _checkout.GetLatestCheckout(id),
+                PatronName = _checkout.GetCurrentCheckoutPatron(id),
+                CurrentHolds = currentHolds
             };
 
             return View(model);

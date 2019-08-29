@@ -1,8 +1,12 @@
 ﻿@model WebLibrary.Models.Catalog.AssetDetailModel
 
+@{ 
+    ViewBag.Title = $"{Model.Title} ({Model.AuthorOrDirector})";
+}
+
 <div class="container">
     <div class="page-header clearfix detailHeading">
-        <h2 class="text-muted">Отображение библиотечных записей</h2>
+        <h2 class="text-muted">@Model.Title <span>(@Model.AuthorOrDirector)</span></h2>
     </div>
 </div>
 
@@ -59,5 +63,31 @@
                 </tr>
             </table>
         </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <h4>История</h4>
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th>Дата взятия</th>
+                    <th>Дата возврата</th>
+                    <th>Идентификатор</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var checkout in Model.CheckoutHistories)
+                {
+                <tr>
+                    <td>@checkout.CheckedOut</td>
+                    <td>@checkout.CheckedIn</td>
+                    <td>@checkout.LibraryCard.Id</td>
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
